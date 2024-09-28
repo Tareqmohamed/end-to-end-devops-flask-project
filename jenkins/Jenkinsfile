@@ -32,13 +32,10 @@ pipeline {
 
         stage('Save Image Tag') {
             steps {
-                script {
                     image_name = "${IMAGE_NAME}:v${BUILD_NUMBER}"
 
                     dir('ansible') {
                         ansible_path = sh(script: 'pwd', returnStdout: true).trim()
-                        
-                    }
                 }
             }
         }
