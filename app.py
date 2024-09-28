@@ -25,7 +25,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/plain")
             self.end_headers()
             instance_id = get_instance_id()
-            self.wfile.write(f"This page is from a simple application that prints the following message. I uploaded the application to CodeCommit and created a Dockerfile to build an image and run a container to host the application. I set up an IAM role to allow the instance to pull the code and wrote a Bash script to download the necessary dependencies, pull the code from CodeCommit, and run the container to access the application. Additionally, I implemented an ELB to distribute traffic and configured auto-scaling to ensure high availability. EC2 Instance ID: {instance_id}".encode())
+            self.wfile.write(f"This page is from a simple application that prints the following message. I uploaded the application to github and created a Dockerfile to build an image and run a container to host the application. I set up a jenkins pipeline to containerize the application and push it to docker hub ther provesion the infra on aws using terrafrom the after provisioning run ansible roles to pull the image and run the container the expose it on port 5000 . EC2 Instance ID: {instance_id}".encode())
         else:
             super().do_GET()
 
