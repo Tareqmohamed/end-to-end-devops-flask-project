@@ -1,0 +1,62 @@
+/* groovylint-disable CompileStatic, NestedBlockDepth */
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'tareqmohamed/flask' 
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Tareqmohamed/end-to-end-devops-flask-project'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:v${BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', '2') {
+                        docker.image("${IMAGE_NAME}:v${BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Save Image Tag') {
+            steps {
+                script {
+                    sh "echo 'IMAGE_TAG=${IMAGE_NAME}:v${BUILD_NUMBER}' > image_tag.txt"
+                }
+            }
+        }
+
+        stage('Deploy using Terraform') {
+            steps {
+                script {
+                    dir('../terraform') {
+                        sh '''
+                        terraform init
+                        terraform apply -auto-approve 
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up Docker resources...'
+            sh "docker rmi ${IMAGE_NAME}:v${BUILD_NUMBER}"
+        }
+    }
+}

@@ -1,0 +1,29 @@
+---
+# tasks file for roles/run_infra
+# pull docker image dynamically
+
+- name: Read Docker image tag from file
+  command: cat /mnt/Cracows/depi/projects/end-to-end-falsk-devops/jenkins/image_tag.txt
+  register: image_tag_output
+  
+
+- name: Parse Docker image tag
+  set_fact:
+    image_tag: "{{ image_tag_output.stdout.split('=')[1] }}"
+
+# Pull Docker Image
+- name: Pull Docker Image
+  docker_image:
+    name: "{{ image_tag }}"
+    source: pull
+  become: yes
+
+# Run Docker Container
+- name: Run Docker Container
+  docker_container:
+    name: "flask"
+    image: "{{ image_tag }}"
+    state: started
+    ports:
+      - "5000:5000"
+  become: yes

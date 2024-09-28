@@ -1,0 +1,7 @@
+---
+- name: Setup docker and pull
+  hosts: all
+  become: yes   
+  roles:
+    - docker   
+    - run_infra

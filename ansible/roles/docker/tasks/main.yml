@@ -1,0 +1,19 @@
+---
+# tasks file for roles/docker
+#install docker
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+  become: yes
+
+#start docker
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+  
