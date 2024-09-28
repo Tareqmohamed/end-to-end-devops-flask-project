@@ -13,7 +13,7 @@ provisioner "local-exec" {
     echo '${aws_instance.depi_task_instance.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=${path.module}/keys/depi_task_private_key.pem' >> ${var.ansible_path}/inventory.ini
     chmod 400 ${path.module}/keys/depi_task_private_key.pem
     sleep 30 
-    ansible-playbook -i ${var.ansible_path}/inventory.ini ${var.ansible_path}/playbook.yaml --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+    ansible-playbook -i ${var.ansible_path}/inventory.ini ${var.ansible_path}/playbook.yaml --extra-vars "image_name=${var.IMAGE_NAME}"  --ssh-extra-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
   EOT
 }
 

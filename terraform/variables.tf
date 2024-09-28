@@ -31,5 +31,11 @@ variable "instance_type" {
 }
 
 variable "ansible_path" {
+  type = string
   default = "/mnt/Cracows/depi/projects/end-to-end-falsk-devops/ansible"
+}
+
+variable "IMAGE_NAME" {
+  type = string
+  default = "tareqmohamed/flask:latest"
 }
