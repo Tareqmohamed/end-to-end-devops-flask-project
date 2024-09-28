@@ -1,7 +1,8 @@
 /* groovylint-disable CompileStatic, NestedBlockDepth */
 pipeline {
-    agent tarek-agent
-
+    agent {
+        label 'tarek-agent'
+    }
     environment {
         IMAGE_NAME = 'tareqmohamed/flask' 
     }
