@@ -1,6 +1,6 @@
 /* groovylint-disable CompileStatic, NestedBlockDepth */
 pipeline {
-    agent any
+    agent tarek-agent
 
     environment {
         IMAGE_NAME = 'tareqmohamed/flask' 
@@ -42,7 +42,7 @@ pipeline {
         stage('Deploy using Terraform') {
             steps {
                 script {
-                    dir('../terraform') {
+                    dir('terraform') {
                         sh '''
                         terraform init
                         terraform apply -auto-approve 
