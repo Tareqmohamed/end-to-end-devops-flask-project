@@ -1,9 +1,11 @@
-/* groovylint-disable CompileStatic, NestedBlockDepth */
 pipeline {
     agent {
-        label 'tarek-agent' }
+        label 'tarek-agent'
+    }
+    
     environment {
-        IMAGE_NAME = 'tareqmohamed/flask' }
+        IMAGE_NAME = 'tareqmohamed/flask'
+    }
 
     stages {
         stage('Clone Repository') {
@@ -32,10 +34,17 @@ pipeline {
 
         stage('Save Image Tag') {
             steps {
-                    image_name = "${IMAGE_NAME}:v${BUILD_NUMBER}"
+                script {
+                    def image_name = "${IMAGE_NAME}:v${BUILD_NUMBER}"
 
                     dir('ansible') {
-                        ansible_path = sh(script: 'pwd', returnStdout: true).trim()
+                        def ansible_path = sh(script: 'pwd', returnStdout: true).trim()
+                        // Save ansible_path to an environment variable so it can be used later
+                        env.ANSIBLE_PATH = ansible_path
+                    }
+
+                    // Save image_name to an environment variable for later use
+                    env.IMAGE_NAME_TAG = image_name
                 }
             }
         }
@@ -46,14 +55,17 @@ pipeline {
                     dir('terraform') {
                         sh """
                         terraform init
-                        terraform apply -var "ansible_path=${ansible_path}" "IMAGE_NAME=${image_name}"-auto-approve
+                        terraform apply -var "ansible_path=${ANSIBLE_PATH}" -var "IMAGE_NAME=${IMAGE_NAME_TAG}" -auto-approve
                         """
                     }
                 }
             }
         }
-        post {
-            always {
+    }
+    
+    post {
+        always {
+            script {
                 echo 'Cleaning up Docker resources...'
                 sh "docker rmi ${IMAGE_NAME}:v${BUILD_NUMBER}"
             }
